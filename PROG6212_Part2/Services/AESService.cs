@@ -8,7 +8,7 @@ namespace PROG6212_Part2.Services
 {
     // Static service for AES (Advanced Encryption Standard) encryption and decryption operations.
     // Provides methods to encrypt/decrypt both files and strings securely using a symmetric key. (dotnet-bot, 2025a)
-    public static class AESService
+    public class AESService
     {
         // AES symmetric key loaded from appsettings.json
         private static readonly byte[] _key;

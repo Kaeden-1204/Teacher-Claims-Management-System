@@ -44,7 +44,7 @@
                             <p class="mb-1"><strong>Total Amount:</strong> R @claim.TotalAmount.ToString("N2")</p>
                             <p class="mb-1"><strong>Notes:</strong> @(!string.IsNullOrEmpty(claim.Notes) ? claim.Notes : "—")</p>
 
-                            <p class="mb-1"><strong>Downloadable Files:</strong></p>
+                          @*   <p class="mb-1"><strong>Downloadable Files:</strong></p>
                             @if (claim.SavedFiles != null && claim.SavedFiles.Any())
                             {
                                 <ul class="list-unstyled mb-2 small">
@@ -61,7 +61,7 @@
                                         </li>
                                     }
                                 </ul>
-                            }
+                            } *@
                             else
                             {
                                 <p class="small text-muted">No files uploaded</p>

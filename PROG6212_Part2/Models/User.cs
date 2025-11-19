@@ -8,20 +8,17 @@ namespace PROG6212_Part2.Models
         public int UserId { get; set; }
 
         [Required]
-        public string Name { get; set; }
-
-        [Required]
-        public string Surname { get; set; }
+        public string FullName { get; set; }
 
         [Required, EmailAddress]
         public string Email { get; set; }
 
         [Required]
-        public string Password { get; set; }  
+        public string Password { get; set; }  // Encrypted using AES
 
         [Required]
-        public string Role { get; set; }      
+        public string Role { get; set; }      // HR, Lecturer, PC, AM
 
-        public double? HourlyRate { get; set; }   
+        public double? HourlyRate { get; set; }   // Only lecturers need it
     }
 }

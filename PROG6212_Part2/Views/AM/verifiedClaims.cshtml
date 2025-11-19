@@ -28,7 +28,7 @@
                             <p class="mb-1"><strong>Total Amount:</strong> R @claim.TotalAmount.ToString("N2")</p>
                        
 
-                            <p class="mb-1"><strong>Documents:</strong></p>
+                           @*  <p class="mb-1"><strong>Documents:</strong></p>
                             @if (claim.SavedFiles != null && claim.SavedFiles.Any())
                             {
                                 <ul class="list-unstyled mb-2 small">
@@ -60,12 +60,12 @@
                                     "Pending" or _ => "badge bg-warning text-dark"
                                 };
                             }
-
-                            <p>
+ *@
+                           @*  <p>
                                 <strong>Status:</strong>
                                 <span class="@statusClass">@claim.Status</span>
                             </p>
-
+ *@
 
                             @if (claim.Status == "Verified")
                             {

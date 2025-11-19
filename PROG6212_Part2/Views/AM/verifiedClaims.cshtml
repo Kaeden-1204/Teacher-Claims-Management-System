@@ -1,0 +1,90 @@
+﻿@model List<PROG6212_Part2.Models.Teacher>
+
+@{
+    ViewData["Title"] = "Academic Manager - Verified Claims";
+}
+
+<div class="container my-5">
+    <h3 class="mb-4" style="color:white">Verified Claims Awaiting Approval</h3>
+    <p class="small mb-4" style="color:white">
+        Below are all claims made by lecturers. You may approve or reject the verified ones.
+    </p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No verified claims at the moment.</div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var claim in Model)
+            {
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" style="color:#265D44">@claim.FullName</h5>
+                            <p class="mb-1"><strong>Email:</strong> @claim.Email</p>
+                            <p class="mb-1"><strong>Subject:</strong> @claim.Subject</p>
+                            <p class="mb-1"><strong>Total Amount:</strong> R @claim.TotalAmount.ToString("N2")</p>
+                       
+
+                            <p class="mb-1"><strong>Documents:</strong></p>
+                            @if (claim.SavedFiles != null && claim.SavedFiles.Any())
+                            {
+                                <ul class="list-unstyled mb-2 small">
+                                    @foreach (var file in claim.SavedFiles)
+                                    {
+                                        <li>
+                                            <a asp-controller="AM"
+                                               asp-action="DownloadDocument"
+                                               asp-route-fileName="@file"
+                                               class="text-decoration-none"
+                                               download>
+                                                @file
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p class="small text-muted">No documents uploaded</p>
+                            }
+
+                            @{
+                                string statusClass = claim.Status switch
+                                {
+                                    "Approved" => "badge bg-success",
+                                    "Verified" => "badge bg-success",
+                                    "Rejected" => "badge bg-danger",
+                                    "Pending" or _ => "badge bg-warning text-dark"
+                                };
+                            }
+
+                            <p>
+                                <strong>Status:</strong>
+                                <span class="@statusClass">@claim.Status</span>
+                            </p>
+
+
+                            @if (claim.Status == "Verified")
+                            {
+                                <div class="d-flex gap-2 mt-3">
+                                    <form asp-action="ApproveClaim" method="post" class="d-inline">
+                                        <input type="hidden" name="claimId" value="@claim.ClaimId" />
+                                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                    </form>
+
+                                    <form asp-action="RejectClaim" method="post" class="d-inline">
+                                        <input type="hidden" name="claimId" value="@claim.ClaimId" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

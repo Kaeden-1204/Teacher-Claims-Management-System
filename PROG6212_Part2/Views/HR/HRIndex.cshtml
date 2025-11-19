@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "HR - Approved Claims";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-header" style="background-color: #00171F; color: white; font-weight: bold;">
+                    <h3 class="mb-0">Approved Claims</h3>
+                    <p class="small mb-0">
+                        Below are all claims approved by the Academic Manager. You may generate invoices for payment processing.
+                    </p>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead style="background-color: #e6f0ea;">
+                                <tr>
+                                    <th class="text-success" style="color:black">Lecturer Name</th>
+                                    <th class="text-success" style="color:black">Email</th>
+                                    <th class="text-success"style="color:black">Total Amount (R)</th>
+                                    <th class="text-success" style="color:black">Files</th>
+                                    <th class="text-success" style="color:black">Approved By</th>
+                                    <th class="text-success" style="color:black">Invoice</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-dark fw-bold" style="color:black">John Wick</td>
+                                    <td class="text-dark"style="color:black">john@university.ac.za</td>
+                                    <td class="text-dark" style="color:black">R 10,000.00</td>
+                                    <td>
+                                        <ul class="list-unstyled mb-0 small text-dark" style="color:black">
+                                            <li><a href="/uploads/Claim_Sept.pdf" class="text-decoration-none text-success" style="color:black" download>Claim_Sept.pdf</a></li>
+                                            <li><a href="/uploads/Attendance.xlsx" class="text-decoration-none text-success" style="color:black" download>Attendance.xlsx</a></li>
+                                        </ul>
+                                    </td>
+                                    <td class="text-dark" style="color:black">Academic Manager: Tobey Maguire</td>
+                                    <td>
+                                        <form method="post" asp-action="GenerateInvoice" asp-route-id="1">
+                                            <button type="submit" class="btn btn-success btn-sm"
+                                                    style="background-color: #265D44; border: none;"
+                                                    onmouseover="this.style.backgroundColor='#2D6A4F';"
+                                                    onmouseout="this.style.backgroundColor='#265D44';">
+                                                Generate Invoice
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-dark fw-bold"style="color:black">Bruce Wilis</td>
+                                    <td class="text-dark"style="color:black">bruce@university.ac.za</td>
+                                    <td class="text-dark" style="color:black">R 8,750.00</td>
+                                    <td>
+                                        <ul class="list-unstyled mb-0 small" style="color:black">
+                                            <li><a href="/uploads/Claim_Aug.docx" class="text-decoration-none text-success" download>Claim_Aug.docx</a></li>
+                                        </ul>
+                                    </td>
+                                    <td class="text-dark">Academic Manager: Jacob Zuma</td>
+                                    <td>
+                                        <form method="post" asp-action="GenerateInvoice" asp-route-id="2">
+                                            <button type="submit" class="btn btn-success btn-sm"
+                                                    style="background-color: #265D44; border: none;"
+                                                    onmouseover="this.style.backgroundColor='#2D6A4F';"
+                                                    onmouseout="this.style.backgroundColor='#265D44';">
+                                                Generate Invoice
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

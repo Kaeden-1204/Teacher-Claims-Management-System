@@ -1,0 +1,90 @@
+[
+  {
+    "ClaimId": "1b26aa42-22e2-4338-9e72-dcd50103000a",
+    "FullName": "Kaeden Samsunder",
+    "Subject": "pe",
+    "Email": "samsunderkaeden@gmail.com",
+    "ClaimDate": "2025-10-22T00:00:00",
+    "HoursWorked": 67,
+    "HourlyRate": 21,
+    "TotalAmount": 1407,
+    "Notes": "i need to get payed by Friday",
+    "SavedFiles": [
+      "CLDV6212 Assessment 2 Brief (1).pdf"
+    ],
+    "Status": "Approved"
+  },
+  {
+    "ClaimId": "795af78c-d001-4ecf-a1ce-b4fd6ad4e584",
+    "FullName": "Leah Samsunder",
+    "Subject": "English",
+    "Email": "LeahP@Tmail.com",
+    "ClaimDate": "2025-10-22T00:00:00",
+    "HoursWorked": 67,
+    "HourlyRate": 67,
+    "TotalAmount": 4489,
+    "Notes": "kekekke",
+    "SavedFiles": [
+      "WBS (1) (1).docx"
+    ],
+    "Status": "Approved"
+  },
+  {
+    "ClaimId": "57e4a9e9-b60d-4849-9618-44586bc4086a",
+    "FullName": "Debbie",
+    "Subject": "Maths",
+    "Email": "dMoodley@Tmail.com",
+    "ClaimDate": "2025-10-22T00:00:00",
+    "HoursWorked": 40,
+    "HourlyRate": 60,
+    "TotalAmount": 2400,
+    "Notes": "kekeke",
+    "SavedFiles": [
+      "CLDV6212 Assessment 2 Brief (2) (1).pdf"
+    ],
+    "Status": "Approved"
+  },
+  {
+    "ClaimId": "205c5003-8837-4378-9ce6-1be072bebbe9",
+    "FullName": "suhail",
+    "Subject": "music",
+    "Email": "sixer@gmail.com",
+    "ClaimDate": "2025-10-22T00:00:00",
+    "HoursWorked": 20,
+    "HourlyRate": 20,
+    "TotalAmount": 400,
+    "Notes": "yeyeyeye",
+    "SavedFiles": [
+      "PROG6212_part1 (2).docx"
+    ],
+    "Status": "Approved"
+  },
+  {
+    "ClaimId": "4879c666-5688-43a5-a7af-a46d9cda6c22",
+    "FullName": "Kaeden Samsunder",
+    "Subject": "Gaming",
+    "Email": "SAMSUNDERKAEDEN@GMAIL.COM",
+    "ClaimDate": "2025-10-22T00:00:00",
+    "HoursWorked": 60,
+    "HourlyRate": 50,
+    "TotalAmount": 3000,
+    "Notes": "i like to play codm",
+    "SavedFiles": [],
+    "Status": "Rejected"
+  },
+  {
+    "ClaimId": "80241f86-37b9-4b3e-b26c-5ac007246ba4",
+    "FullName": "Kaeden Samsunder",
+    "Subject": "Gaming",
+    "Email": "SAMSUNDERKAEDEN@GMAIL.COM",
+    "ClaimDate": "2025-10-22T00:00:00",
+    "HoursWorked": 70,
+    "HourlyRate": 60,
+    "TotalAmount": 4200,
+    "Notes": "i like money",
+    "SavedFiles": [
+      "PROG6212_part1 (1).docx"
+    ],
+    "Status": "Approved"
+  }
+]

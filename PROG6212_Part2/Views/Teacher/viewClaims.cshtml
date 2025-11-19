@@ -1,0 +1,61 @@
+﻿@model List<PROG6212_Part2.Models.Teacher>
+
+
+
+
+<div class="container my-5">
+    <h2>Submitted Claims</h2>
+
+    <form method="get" asp-action="ViewClaims" class="mb-3">
+        <input type="text" name="search" placeholder="Search by name or email..." class="form-control mb-2" />
+        <button type="submit" class="btn btn-success">Search</button>
+    </form>
+
+    @if (Model.Count == 0)
+    {
+        <p>No claims submitted yet.</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var claim in Model)
+            {
+                <div class="col-md-6 mb-3">
+                    <div class="card p-3">
+                        <h5>@claim.FullName (@claim.Email)</h5>
+                        <p><strong>Subject:</strong> @claim.Subject</p>
+                        <p><strong>Date:</strong> @claim.ClaimDate.ToString("yyyy-MM-dd")</p>
+
+                        <p><strong>Hours Worked:</strong> @claim.HoursWorked</p>
+                        <p class="mb-1"><strong>Total Amount:</strong> R @claim.TotalAmount.ToString("N2")</p>
+
+
+                        @{
+                            string statusClass = claim.Status switch
+                            {
+                                "Approved" => "badge bg-success",
+                                "Verified" => "badge bg-success",
+                                "Rejected" => "badge bg-danger",
+                                "Pending" or _ => "badge bg-warning text-dark"
+                            };
+                        }
+                        <p>
+                            <strong>Status:</strong>
+                            <span class="@statusClass">@claim.Status</span>
+                        </p>
+                        @if (claim.SavedFiles != null && claim.SavedFiles.Count > 0)
+                        {
+                            <p><strong>Uploaded Documents:</strong></p>
+                            <ul>
+                                @foreach (var file in claim.SavedFiles)
+                                {
+                                    <li>@file</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

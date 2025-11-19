@@ -42,7 +42,7 @@ namespace PROG6212_Part2.Controllers
         {
             try
             {
-                return View(new Teacher());
+                return View(new Claim());
             }
             catch (Exception ex)
             {
@@ -55,7 +55,7 @@ namespace PROG6212_Part2.Controllers
         // POST handler for submitting or calculating claims
         [HttpPost]
         [ValidateAntiForgeryToken] // Protects against CSRF attacks
-        public IActionResult SubmitClaim(Teacher model, string action)
+        public IActionResult SubmitClaim(Claim model, string action)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace PROG6212_Part2.Controllers
                 model.SavedFiles = savedFiles;
                 model.SupportingDocuments = null;
 
-                var claims = new List<Teacher>();
+                var claims = new List<Claim>();
 
                 // Load existing claims from JSON file
                 try
@@ -130,7 +130,7 @@ namespace PROG6212_Part2.Controllers
                     if (System.IO.File.Exists(_jsonFile))
                     {
                         var json = System.IO.File.ReadAllText(_jsonFile);
-                        claims = JsonSerializer.Deserialize<List<Teacher>>(json) ?? new List<Teacher>();
+                        claims = JsonSerializer.Deserialize<List<Claim>>(json) ?? new List<Claim>();
                     }
                 }
                 catch (Exception ex)
@@ -170,14 +170,14 @@ namespace PROG6212_Part2.Controllers
         {
             try
             {
-                var claims = new List<Teacher>();
+                var claims = new List<Claim>();
 
                 try
                 {
                     if (System.IO.File.Exists(_jsonFile))
                     {
                         var json = System.IO.File.ReadAllText(_jsonFile);
-                        claims = JsonSerializer.Deserialize<List<Teacher>>(json) ?? new List<Teacher>();
+                        claims = JsonSerializer.Deserialize<List<Claim>>(json) ?? new List<Claim>();
                     }
                 }
                 catch (Exception ex)
@@ -201,7 +201,7 @@ namespace PROG6212_Part2.Controllers
             {
                 _logger.LogError(ex, "Error while loading ViewClaims page.");
                 TempData["Error"] = "An unexpected error occurred while loading claims.";
-                return View(new List<Teacher>());
+                return View(new List<Claim>());
             }
         }
     }

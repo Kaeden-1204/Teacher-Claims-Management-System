@@ -36,7 +36,7 @@ namespace PROG6212_Part2.Controllers
             {
                 _logger.LogError(ex, "Error loading pending claims."); // Log detailed error
                 TempData["Error"] = "Unable to load pending claims at this time."; // Feedback for user
-                return View(new List<Teacher>()); // Return empty view on failure
+                return View(new List<Claim>()); // Return empty view on failure
             }
         }
 
@@ -140,22 +140,22 @@ namespace PROG6212_Part2.Controllers
         }
 
         // Loads and deserializes claim data from the JSON file
-        private List<Teacher> LoadClaims()
+        private List<Claim> LoadClaims()
         {
             try
             {
                 // If file is missing, return an empty list
                 if (!System.IO.File.Exists(_jsonFile))
-                    return new List<Teacher>();
+                    return new List<Claim>();
 
                 var json = System.IO.File.ReadAllText(_jsonFile); // Read raw JSON text
-                return JsonSerializer.Deserialize<List<Teacher>>(json) ?? new List<Teacher>(); // Convert JSON to objects
+                return JsonSerializer.Deserialize<List<Claim>>(json) ?? new List<Claim>(); // Convert JSON to objects
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to load claims from JSON file.");
                 TempData["Error"] = "Unable to load claims at this time.";
-                return new List<Teacher>();
+                return new List<Claim>();
             }
         }
     }

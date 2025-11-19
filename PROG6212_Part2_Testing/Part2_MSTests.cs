@@ -35,7 +35,7 @@ namespace PROG6212_Part2_Testing
         [TestMethod]
         public void TotalAmount_Correct()
         {
-            var teacher = new Teacher
+            var teacher = new Claim
             {
                 HoursWorked = 8,
                 HourlyRate = 50
@@ -50,7 +50,7 @@ namespace PROG6212_Part2_Testing
         public void SubmitClaim_Invalid()
         {
             // Arrange: missing required fields
-            var teacher = new Teacher();
+            var teacher = new Claim();
             _teacherController.ModelState.AddModelError("FullName", "Required");
 
             // Act
@@ -65,7 +65,7 @@ namespace PROG6212_Part2_Testing
         [TestMethod]
         public void SubmitClaim_Valid()
         {
-            var teacher = new Teacher
+            var teacher = new Claim
             {
                 FullName = "Test Teacher",
                 Email = "test@example.com",
@@ -98,8 +98,8 @@ namespace PROG6212_Part2_Testing
         {
             // Arrange: temporary JSON file for isolated testing
             string tempFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".json");
-            var claim = new Teacher { ClaimId = Guid.NewGuid(), Status = "Pending" };
-            File.WriteAllText(tempFile, System.Text.Json.JsonSerializer.Serialize(new List<Teacher> { claim }));
+            var claim = new Claim { ClaimId = Guid.NewGuid(), Status = "Pending" };
+            File.WriteAllText(tempFile, System.Text.Json.JsonSerializer.Serialize(new List<Claim> { claim }));
 
             // Initialize PCController and TempData
             var loggerMock = new Mock<ILogger<PCController>>();
@@ -115,7 +115,7 @@ namespace PROG6212_Part2_Testing
             var result = controller.VerifyClaim(claim.ClaimId) as RedirectToActionResult;
 
             // Assert
-            var claims = System.Text.Json.JsonSerializer.Deserialize<List<Teacher>>(File.ReadAllText(tempFile));
+            var claims = System.Text.Json.JsonSerializer.Deserialize<List<Claim>>(File.ReadAllText(tempFile));
             Assert.AreEqual("Verified", claims.First().Status);
             Assert.AreEqual("PendingClaims", result.ActionName);
 

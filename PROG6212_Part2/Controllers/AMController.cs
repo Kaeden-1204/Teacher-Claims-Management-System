@@ -34,7 +34,7 @@ namespace PROG6212_Part2.Controllers
             {
                 _logger.LogError(ex, "Error loading verified claims.");
                 TempData["Error"] = "Unable to load verified claims at this time."; //Code Attribution(farshid jahanmanesh, 2019)
-                return View(new List<Teacher>());
+                return View(new List<Claim>());
             }
         }
 
@@ -106,15 +106,15 @@ namespace PROG6212_Part2.Controllers
         }
 
         // Load claims from JSON file
-        private List<Teacher> LoadClaims()
+        private List<Claim> LoadClaims()
         {
             try
             {
                 if (!System.IO.File.Exists(_jsonFile))
-                    return new List<Teacher>();
+                    return new List<Claim>();
 
                 var json = System.IO.File.ReadAllText(_jsonFile);
-                var claims = JsonSerializer.Deserialize<List<Teacher>>(json) ?? new List<Teacher>();
+                var claims = JsonSerializer.Deserialize<List<Claim>>(json) ?? new List<Claim>();
 
                 // Ensure each claim has a unique ID
                 foreach (var claim in claims.Where(c => c.ClaimId == Guid.Empty))
@@ -126,7 +126,7 @@ namespace PROG6212_Part2.Controllers
             {
                 _logger.LogError(ex, "Failed to load claims from JSON file.");
                 TempData["Error"] = "Unable to load claims at this time.";
-                return new List<Teacher>();
+                return new List<Claim>();
             }
         }
 

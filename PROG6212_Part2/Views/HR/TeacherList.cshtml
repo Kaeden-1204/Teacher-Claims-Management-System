@@ -1,0 +1,41 @@
+﻿@model IEnumerable<PROG6212_Part2.Models.User>
+
+<h2>Lecturers</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Hourly Rate</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FullName</td>
+                <td>@user.Email</td>
+                <td>R @user.HourlyRate</td>
+                <td>
+                    <a asp-controller="HR"
+                       asp-action="EditTeacher"
+                       asp-route-id="@user.UserId"
+                       class="btn btn-primary btn-sm">
+                        Edit
+                    </a>
+                </td>
+                <td>
+                    <a asp-controller="HR"
+                       asp-action="DeleteTeacher"
+                       asp-route-id="@user.UserId"
+                       class="btn btn-danger btn-sm">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

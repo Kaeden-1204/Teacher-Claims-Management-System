@@ -1,0 +1,19 @@
+﻿@model PROG6212_Part2.Models.User
+
+@{
+    ViewData["Title"] = "Delete Teacher";
+}
+
+<h2>Delete Teacher</h2>
+
+<p>Are you sure you want to delete <strong>@Model.FullName</strong>?</p>
+
+<form asp-action="DeleteTeacher" asp-controller="HR" method="post">
+    <input type="hidden" asp-for="UserId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="TeacherList" asp-controller="HR" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

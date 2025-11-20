@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Login</h2>
+
+<form method="post">
+    <label>Email:</label>
+    <input type="email" name="email" required class="form-control" />
+
+    <label>Password:</label>
+    <input type="password" name="password" required class="form-control" />
+
+    <button type="submit" class="btn btn-primary mt-3">Login</button>
+
+    <p class="text-danger">@ViewBag.Error</p>
+</form>

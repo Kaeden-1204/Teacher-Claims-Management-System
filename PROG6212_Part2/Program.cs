@@ -17,8 +17,8 @@ namespace PROG6212_Part2
 
          
             builder.Services.AddSingleton<AESService>();
+            builder.Services.AddHttpContextAccessor();
 
-           
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -58,7 +58,7 @@ namespace PROG6212_Part2
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
+                pattern: "{controller=Home}/{action=Login}/{id?}")
                 .WithStaticAssets();
 
             app.Run();

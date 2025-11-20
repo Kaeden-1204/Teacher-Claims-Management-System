@@ -19,24 +19,24 @@ namespace PROG6212_Part2.Controllers
         //}
 
         //// Display all verified claims
-        //public async Task<IActionResult> VerifiedClaims()
-        //{
-        //    try
-        //    {
-        //        var claims = await _context.Claims
-        //            .Include(c => c.Documents)
-        //            .Where(c => c.Status == "Verified")
-        //            .ToListAsync();
+        public async Task<IActionResult> VerifiedClaims()
+        {
+            //try
+            //{
+            //    var claims = await _context.Claims
+            //        .Include(c => c.Documents)
+            //        .Where(c => c.Status == "Verified")
+            //        .ToListAsync();
 
-        //        return View(claims);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error loading verified claims.");
-        //        TempData["Error"] = "Unable to load verified claims at this time.";
-        //        return View(new List<Claim>());
-        //    }
-        //}
+            //    return View(claims);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(ex, "Error loading verified claims.");
+            //    TempData["Error"] = "Unable to load verified claims at this time.";
+                return View(VerifiedClaims);
+            }
+        }
 
         //// Approve a specific claim
         //[HttpPost]
@@ -121,4 +121,4 @@ namespace PROG6212_Part2.Controllers
         //    }
         //}
     }
-}
+

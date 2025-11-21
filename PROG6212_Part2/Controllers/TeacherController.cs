@@ -1,218 +1,216 @@
-﻿using Microsoft.AspNetCore.Mvc;     
-using PROG6212_Part2.Models;       
-using PROG6212_Part2.Services;    
-using System.Text.Json;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PROG6212_Part2.Data;
+using PROG6212_Part2.Models;
+using PROG6212_Part2.Services;
 
 namespace PROG6212_Part2.Controllers
 {
     public class TeacherController : Controller
     {
-    //    // Directory paths for encrypted documents and stored JSON claim data
-    //    private readonly string _encryptedDocsPath;
-    //    private readonly string _jsonFile;
+        private readonly ApplicationDbContext _db;
+        private readonly ILogger<TeacherController> _logger;
+        private readonly string _documentsPath;
 
-    //    // ASP.NET Core's logging interface for structured logging
-    //    private readonly ILogger<TeacherController> _logger;
+        public TeacherController(ApplicationDbContext db, ILogger<TeacherController> logger)
+        {
+            _db = db;
+            _logger = logger;
 
-    //    // Constructor uses Dependency Injection to initialize ILogger
-    //    public TeacherController(ILogger<TeacherController> logger)
-    //    {
-    //        _logger = logger;//Code Attribution (Reppen, 2016)
-    //        _encryptedDocsPath = Path.Combine(Directory.GetCurrentDirectory(), "Documents");
-    //        _jsonFile = Path.Combine(Directory.GetCurrentDirectory(), "Data", "claims.json");
+            _documentsPath = Path.Combine(Directory.GetCurrentDirectory(), "Documents");
+            if (!Directory.Exists(_documentsPath))
+                Directory.CreateDirectory(_documentsPath);
+        }
 
-    //        // Ensure necessary directories exist, creating them if missing
-    //        try
-    //        {
-    //            if (!Directory.Exists(_encryptedDocsPath))
-    //                Directory.CreateDirectory(_encryptedDocsPath);
+        private int? CurrentUserId() => HttpContext.Session.GetInt32("UserId");
 
-    //            var dataDir = Path.GetDirectoryName(_jsonFile);
-    //            if (!Directory.Exists(dataDir))
-    //                Directory.CreateDirectory(dataDir!);
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            _logger.LogError(ex, "Failed to initialize required directories.");
-    //        }
-    //    }
+     
+        public async Task<IActionResult> SubmitClaim()
+        {
+            var userId = CurrentUserId();
+            if (userId == null) return RedirectToAction("Login", "Home");
 
-    //    // Displays the claim submission form view
-    //    public IActionResult SubmitClaim()
-    //    {
-    //        try
-    //        {
-    //            return View(new Teacher());
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            _logger.LogError(ex, "Error loading SubmitClaim view.");
-    //            TempData["Error"] = "An unexpected error occurred while loading the form.";
-    //            return RedirectToAction("ViewClaims");
-    //        }
-    //    }
+            var user = await _db.Users.FindAsync(userId.Value);
+            if (user == null) return RedirectToAction("Login", "Home");
 
-    //    // POST handler for submitting or calculating claims
-    //    [HttpPost]
-    //    [ValidateAntiForgeryToken] // Protects against CSRF attacks
-    //    public IActionResult SubmitClaim(Teacher model, string action)
-    //    {
-    //        try
-    //        {
-    //            // Allows user to calculate totals without submitting
-    //            if (action == "CalculateTotal")
-    //                return View(model);
+            Claim model;
 
-    //            // Validate input fields before saving
-    //            if (!ModelState.IsValid)
-    //            {
-    //                TempData["Error"] = "Please correct the highlighted errors and try again.";
-    //                return View(model);
-    //            }
+          
+            if (TempData["ClaimModel"] != null)
+            {
+                var json = TempData["ClaimModel"].ToString();
+                model = System.Text.Json.JsonSerializer.Deserialize<Claim>(json)!;
+            }
+            else
+            {
+                model = new Claim
+                {
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    HourlyRate = user.HourlyRate ?? 0,
+                    ClaimDate = DateTime.UtcNow.Date
+                };
+            }
 
-    //            var savedFiles = new List<string>();
+            return View(model);
+        }
 
-    //            // Handle file uploads and encrypt them
-    //            if (model.SupportingDocuments != null)
-    //            {
-    //                foreach (var file in model.SupportingDocuments)
-    //                {
-    //                    try
-    //                    {
-    //                        // Restrict file types for security
-    //                        var allowedExtensions = new[] { ".pdf", ".docx", ".xlsx" };
-    //                        var extension = Path.GetExtension(file.FileName).ToLower();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitClaim(Claim model, List<IFormFile>? UploadFiles, string? action)
+        {
+            var userId = CurrentUserId();
+            if (userId == null) return RedirectToAction("Login", "Home");
 
-    //                        if (!allowedExtensions.Contains(extension))
-    //                        {
-    //                            ModelState.AddModelError("SupportingDocuments", $"File type {extension} is not allowed.");
-    //                            return View(model);
-    //                        }
+            var user = await _db.Users.FindAsync(userId.Value);
+            if (user == null) return RedirectToAction("Login", "Home");
 
-    //                        // Restrict file size to 5MB
-    //                        if (file.Length > 5 * 1024 * 1024)
-    //                        {
-    //                            ModelState.AddModelError("SupportingDocuments", "File size cannot exceed 5MB.");
-    //                            return View(model);
-    //                        }
+            // Enforce DB HourlyRate
+            model.HourlyRate = user.HourlyRate ?? 0;
 
-    //                        // Save and encrypt uploaded file
-    //                        var originalFileName = Path.GetFileName(file.FileName);
-    //                        var tempPath = Path.Combine(_encryptedDocsPath, originalFileName);
+            // Calculate total amount
+            model.TotalAmount = model.HoursWorked * model.HourlyRate;
 
-    //                        using (var stream = new FileStream(tempPath, FileMode.Create))
-    //                            file.CopyTo(stream);
+            // Just recalc total without saving
+            if (action == "CalculateTotal")
+            {
+                TempData["ClaimModel"] = System.Text.Json.JsonSerializer.Serialize(model);
+                return View(model);
+            }
 
-    //                        var encryptedPath = tempPath + ".enc";
-    //                        AESService.EncryptFile(tempPath, encryptedPath); // Custom encryption service
-    //                        System.IO.File.Delete(tempPath); // Delete unencrypted version for security
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(model.Subject))
+                ModelState.AddModelError(nameof(model.Subject), "Subject is required.");
 
-    //                        savedFiles.Add(originalFileName);
-    //                    }
-    //                    catch (Exception ex)
-    //                    {
-    //                        _logger.LogError(ex, "Error encrypting or saving file {FileName}", file.FileName);
-    //                        ModelState.AddModelError("SupportingDocuments", $"There was a problem processing {file.FileName}. Please try again.");
-    //                        return View(model);
-    //                    }
-    //                }
-    //            }
+            if (!ModelState.IsValid)
+                return View(model);
 
-    //            // Store file names and reset document list before serialization
-    //            model.SavedFiles = savedFiles;
-    //            model.SupportingDocuments = null;
+            model.UserId = user.UserId;
+            model.Status = "Pending";
 
-    //            var claims = new List<Teacher>();
+          
+            if (model.Documents == null)
+                model.Documents = new List<ClaimDocument>();
 
-    //            // Load existing claims from JSON file
-    //            try
-    //            {
-    //                if (System.IO.File.Exists(_jsonFile))
-    //                {
-    //                    var json = System.IO.File.ReadAllText(_jsonFile);
-    //                    claims = JsonSerializer.Deserialize<List<Teacher>>(json) ?? new List<Teacher>();
-    //                }
-    //            }
-    //            catch (Exception ex)
-    //            {
-    //                _logger.LogWarning(ex, "Could not read existing claims data. A new file will be created.");
-    //            }
+          
+            if (UploadFiles != null && UploadFiles.Count > 0)
+            {
+                foreach (var file in UploadFiles)
+                {
+                    try
+                    {
+                        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+                        var allowed = new[] { ".pdf", ".docx", ".doc", ".xlsx", ".xls", ".jpg", ".jpeg", ".png" };
+                        if (!allowed.Contains(ext))
+                        {
+                            ModelState.AddModelError("Documents", $"File type {ext} not allowed.");
+                            return View(model);
+                        }
 
-    //            // Add new claim to list and save back to JSON
-    //            claims.Add(model);
+                        if (file.Length > 5 * 1024 * 1024)
+                        {
+                            ModelState.AddModelError("Documents", "File size cannot exceed 5MB.");
+                            return View(model);
+                        }
 
-    //            try
-    //            {
-    //                var options = new JsonSerializerOptions { WriteIndented = true };
-    //                var json = JsonSerializer.Serialize(claims, options);
-    //                System.IO.File.WriteAllText(_jsonFile, json);
-    //            }
-    //            catch (Exception ex)
-    //            {
-    //                _logger.LogError(ex, "Error writing claim data to file.");
-    //                TempData["Error"] = "Failed to save your claim. Please try again later.";
-    //                return View(model);
-    //            }
+                        var safeFileName = $"{Path.GetFileNameWithoutExtension(file.FileName)}_{Guid.NewGuid()}{ext}";
+                        var filePath = Path.Combine(_documentsPath, safeFileName);
 
-    //            TempData["Success"] = "Claim submitted successfully!";//Code Attribution(farshid jahanmanesh, 2019)
-    //            return RedirectToAction("ViewClaims");
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            _logger.LogError(ex, "Unexpected error during claim submission.");
-    //            TempData["Error"] = "An unexpected error occurred while submitting your claim. Please try again later.";
-    //            return View(model);
-    //        }
-    //    }
+                        // Save temporary file
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                            await file.CopyToAsync(stream);
 
-    //    // Displays all submitted claims with optional search functionality
-    //    public IActionResult ViewClaims(string search)
-    //    {
-    //        try
-    //        {
-    //            var claims = new List<Teacher>();
+                        // Encrypt file in place
+                        var encryptedFilePath = filePath + ".enc";
+                        AESService.EncryptFile(filePath, encryptedFilePath);
+                        System.IO.File.Delete(filePath); // delete unencrypted file
 
-    //            try
-    //            {
-    //                if (System.IO.File.Exists(_jsonFile))
-    //                {
-    //                    var json = System.IO.File.ReadAllText(_jsonFile);
-    //                    claims = JsonSerializer.Deserialize<List<Teacher>>(json) ?? new List<Teacher>();
-    //                }
-    //            }
-    //            catch (Exception ex)
-    //            {
-    //                _logger.LogError(ex, "Failed to load claims from JSON file.");
-    //                TempData["Error"] = "Unable to load previous claims at this time.";
-    //            }
+                        // Save metadata to DB
+                        var docRecord = new ClaimDocument
+                        {
+                            FileName = file.FileName,
+                            FilePath = Path.GetFileName(encryptedFilePath),
+                            Claim = model
+                        };
 
-    //            // Simple search by name or email
-    //            if (!string.IsNullOrEmpty(search))
-    //            {
-    //                search = search.ToLower();
-    //                claims = claims
-    //                    .Where(c => c.FullName.ToLower().Contains(search) || c.Email.ToLower().Contains(search))
-    //                    .ToList();
-    //            }
+                        model.Documents.Add(docRecord);
+                        _db.ClaimDocuments.Add(docRecord);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error processing file {File}", file.FileName);
+                        ModelState.AddModelError("Documents", $"Failed to process {file.FileName}.");
+                        return View(model);
+                    }
+                }
+            }
 
-    //            return View(claims);
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            _logger.LogError(ex, "Error while loading ViewClaims page.");
-    //            TempData["Error"] = "An unexpected error occurred while loading claims.";
-    //            return View(new List<Teacher>());
-    //        }
-    //    }
+            // Save claim + documents
+            _db.Claims.Add(model);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "Claim submitted successfully!";
+            return RedirectToAction(nameof(ViewClaims));
+        }
+
+        public async Task<IActionResult> ViewClaims(string? search)
+        {
+            var userId = CurrentUserId();
+            if (userId == null) return RedirectToAction("Login", "Home");
+
+            var claimsQuery = _db.Claims
+                .Include(c => c.Documents)
+                .Where(c => c.UserId == userId.Value);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var s = search.ToLower();
+                claimsQuery = claimsQuery.Where(c =>
+                    c.FullName.ToLower().Contains(s) ||
+                    c.Email.ToLower().Contains(s) ||
+                    c.Subject.ToLower().Contains(s));
+            }
+
+            var claims = await claimsQuery
+                .OrderByDescending(c => c.ClaimDate)
+                .ToListAsync();
+
+            return View(claims);
+        }
+
+  
+        public async Task<IActionResult> DownloadDocument(int documentId)
+        {
+            var userId = CurrentUserId();
+            if (userId == null) return RedirectToAction("Login", "Home");
+
+            var doc = await _db.ClaimDocuments.Include(d => d.Claim)
+                .FirstOrDefaultAsync(d => d.DocumentId == documentId);
+
+            if (doc == null) return NotFound();
+            if (doc.Claim.UserId != userId.Value && HttpContext.Session.GetString("UserRole") != "HR")
+                return Forbid();
+
+            var encryptedPath = Path.Combine(_documentsPath, doc.FilePath);
+            if (!System.IO.File.Exists(encryptedPath)) return NotFound();
+
+            var tempDir = Path.Combine(Path.GetTempPath(), "DecryptedDocs");
+            Directory.CreateDirectory(tempDir);
+            var decryptedFilePath = Path.Combine(tempDir, doc.FileName);
+
+            try
+            {
+                AESService.DecryptFile(encryptedPath, decryptedFilePath);
+                var bytes = await System.IO.File.ReadAllBytesAsync(decryptedFilePath);
+                System.IO.File.Delete(decryptedFilePath);
+                return File(bytes, "application/octet-stream", doc.FileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error decrypting document {DocId}", documentId);
+                TempData["Error"] = "Error decrypting document.";
+                return RedirectToAction(nameof(ViewClaims));
+            }
+        }
     }
 }
-
-
-//Reference list
-//Advanced C# Programming Course. (2024). freeCodeCamp.org. Available at: https://youtu.be/YT8s-90oDC0 [Accessed 19 Oct. 2025].
-//dotnet-bot (2025a). Aes Class (System.Security.Cryptography). [online] Microsoft.com. Available at: https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.aes?view=net-9.0 [Accessed 19 Oct. 2025].
-//dotnet-bot (2025b). Guid.NewGuid Method (System). [online] Microsoft.com. Available at: https://learn.microsoft.com/en-us/dotnet/api/system.guid.newguid?view=net-9.0 [Accessed 19 Oct. 2025].
-//dotnet-bot (2025c). System.IO Namespace. [online] Microsoft.com. Available at: https://learn.microsoft.com/en-us/dotnet/api/system.io?view=net-9.0 [Accessed 19 Oct. 2025].
-//farshid jahanmanesh (2019). how do i use temp data in asp.net mvc core. [online] Stack Overflow. Available at: https://stackoverflow.com/questions/57072523/how-do-i-use-temp-data-in-asp-net-mvc-core [Accessed 19 Oct. 2025].
-//Reppen, B. (2016). How do I log from other classes than the controller in ASP.NET Core? [online] Stack Overflow. Available at: https://stackoverflow.com/questions/39031585/how-do-i-log-from-other-classes-than-the-controller-in-asp-net-core [Accessed 19 Oct. 2025].
-//Tutorials, D.N. (2024). TempData in ASP.NET Core MVC. [online] Dot Net Tutorials. Available at: https://dotnettutorials.net/lesson/tempdata-in-asp-net-core-mvc/ [Accessed 19 Oct. 2025].

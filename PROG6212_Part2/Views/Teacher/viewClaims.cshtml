@@ -1,19 +1,20 @@
 ﻿@model List<PROG6212_Part2.Models.Claim>
-
-
-
+@{
+    Layout = "_Layout";
+}
 
 <div class="container my-5">
-    <h2>Submitted Claims</h2>
+    <h2 class="text-white">Submitted Claims</h2>
 
     <form method="get" asp-action="ViewClaims" class="mb-3">
-        <input type="text" name="search" placeholder="Search by name or email..." class="form-control mb-2" />
+        <input type="text" name="search" placeholder="Search by name, email, or subject..." 
+               class="form-control mb-2" />
         <button type="submit" class="btn btn-success">Search</button>
     </form>
 
-    @if (Model.Count == 0)
+    @if (!Model.Any())
     {
-        <p>No claims submitted yet.</p>
+        <p class="text-white">No claims submitted yet.</p>
     }
     else
     {
@@ -21,14 +22,15 @@
             @foreach (var claim in Model)
             {
                 <div class="col-md-6 mb-3">
-                    <div class="card p-3">
+                    <div class="card p-3" 
+                         style="background-color: #265D44; color: white; border: none;">
+
                         <h5>@claim.FullName (@claim.Email)</h5>
+
                         <p><strong>Subject:</strong> @claim.Subject</p>
                         <p><strong>Date:</strong> @claim.ClaimDate.ToString("yyyy-MM-dd")</p>
-
                         <p><strong>Hours Worked:</strong> @claim.HoursWorked</p>
-                        <p class="mb-1"><strong>Total Amount:</strong> R @claim.TotalAmount.ToString("N2")</p>
-
+                        <p><strong>Total Amount:</strong> R @claim.TotalAmount.ToString("N2")</p>
 
                         @{
                             string statusClass = claim.Status switch
@@ -36,23 +38,30 @@
                                 "Approved" => "badge bg-success",
                                 "Verified" => "badge bg-success",
                                 "Rejected" => "badge bg-danger",
-                                "Pending" or _ => "badge bg-warning text-dark"
+                                _ => "badge bg-warning text-dark"
                             };
                         }
-                        <p>
-                            <strong>Status:</strong>
+
+                        <p><strong>Status:</strong> 
                             <span class="@statusClass">@claim.Status</span>
                         </p>
-                      @*   @if (claim.SavedFiles != null && claim.SavedFiles.Count > 0)
+
+                        @if (claim.Documents?.Any() ?? false)
                         {
                             <p><strong>Uploaded Documents:</strong></p>
                             <ul>
-                                @foreach (var file in claim.SavedFiles)
+                                @foreach (var doc in claim.Documents)
                                 {
-                                    <li>@file</li>
+                                    <li>
+                                        <a asp-action="DownloadDocument" 
+                                           asp-route-documentId="@doc.DocumentId"
+                                           style="color:white; text-decoration:underline;">
+                                            @doc.FileName
+                                        </a>
+                                    </li>
                                 }
                             </ul>
-                        } *@
+                        }
                     </div>
                 </div>
             }

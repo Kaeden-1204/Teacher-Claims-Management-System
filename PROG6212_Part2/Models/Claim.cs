@@ -38,6 +38,10 @@ namespace PROG6212_Part2.Models
 
         
         public List<ClaimDocument> Documents { get; set; } = new List<ClaimDocument>();
+
+        public int UserId { get; set; }            // foreign key to User
+        public User? User { get; set; }            // navigation property
+
     }
 }
 

@@ -25,33 +25,31 @@ namespace PROG6212_Part2.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
-            var user = _context.Users
-                .FirstOrDefault(u => u.Email == email && u.Password == password);
-
+            var user = _context.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
             if (user == null)
             {
                 ViewBag.Error = "Invalid email or password";
                 return View();
             }
 
-            
             HttpContext.Session.SetString("UserRole", user.Role);
             HttpContext.Session.SetString("UserName", user.FullName ?? user.Email);
+            HttpContext.Session.SetString("UserEmail", user.Email);
+            HttpContext.Session.SetInt32("UserId", user.UserId); 
 
-            
             return user.Role switch
             {
                 "HR" => RedirectToAction("HRIndex", "HR"),
-                "PC" => RedirectToAction("Index", "ProgrammeCoordinator"),
-                "AM" => RedirectToAction("Index", "AcademicManager"),
-                "Teacher" => RedirectToAction("Index", "Teacher"),
+                "PC" => RedirectToAction("PendingClaims", "PC"),
+                "AM" => RedirectToAction("VerifiedClaims", "AM"),
+                "Teacher" => RedirectToAction("viewClaims", "Teacher"),
                 _ => RedirectToAction("Index")
             };
         }
+
         public IActionResult Logout()
         {
             

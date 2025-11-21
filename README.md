@@ -67,7 +67,8 @@ The PROG6212_Part2 application is designed to streamline the process of submitti
    - Ensure the application has write permissions to this folder.
 
 ---
-
+## Youtube Link
+- https://youtu.be/5u8RCnpm0Zw
 ## How the Program Will Run
 
 1. Start the application from Visual Studio (`F5`) or `dotnet run`.  

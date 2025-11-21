@@ -4,15 +4,17 @@
     ViewData["Title"] = "Delete Teacher";
 }
 
-<h2>Delete Teacher</h2>
+<h2 class="mb-4 text-white">Delete Teacher</h2>
 
-<p>Are you sure you want to delete <strong>@Model.FullName</strong>?</p>
+<div class="card p-4 shadow-sm" style="max-width:600px;">
+    <p class="text-white">Are you sure you want to delete <strong>@Model.FullName</strong>?</p>
 
-<form asp-action="DeleteTeacher" asp-controller="HR" method="post">
-    <input type="hidden" asp-for="UserId" />
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a asp-action="TeacherList" asp-controller="HR" class="btn btn-secondary ms-2">Cancel</a>
-</form>
+    <form asp-action="DeleteTeacher" asp-controller="HR" method="post" class="d-flex gap-2">
+        <input type="hidden" asp-for="UserId" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="TeacherList" asp-controller="HR" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

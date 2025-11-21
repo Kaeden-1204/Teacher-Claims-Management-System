@@ -2,16 +2,39 @@
     ViewData["Title"] = "Login";
 }
 
-<h2>Login</h2>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
 
-<form method="post">
-    <label>Email:</label>
-    <input type="email" name="email" required class="form-control" />
+            <div class="card shadow-sm" style="background-color:#265D44; border:none;">
+                <div class="card-body">
 
-    <label>Password:</label>
-    <input type="password" name="password" required class="form-control" />
+                    <h2 class="mb-3 text-white">Login</h2>
 
-    <button type="submit" class="btn btn-primary mt-3">Login</button>
+                    <form method="post">
 
-    <p class="text-danger">@ViewBag.Error</p>
-</form>
+                        <label class="text-white">Email:</label>
+                        <input type="email" name="email" required
+                               class="form-control"
+                               style="background-color:#2D6A4F; color:white; border:none;" />
+
+                        <label class="text-white mt-3">Password:</label>
+                        <input type="password" name="password" required
+                               class="form-control"
+                               style="background-color:#2D6A4F; color:white; border:none;" />
+
+                        <button type="submit" class="btn mt-4"
+                                style="background-color:#1B4F3B; color:white;">
+                            Login
+                        </button>
+
+                        <p class="text-danger mt-3">@ViewBag.Error</p>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

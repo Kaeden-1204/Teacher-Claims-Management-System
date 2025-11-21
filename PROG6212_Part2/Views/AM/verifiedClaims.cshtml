@@ -1,9 +1,5 @@
 ﻿@model List<PROG6212_Part2.Models.Claim>
 
-@{
-    ViewData["Title"] = "Academic Manager - Verified Claims";
-}
-
 <div class="container my-5">
     <h3 class="mb-4" style="color:white">Verified Claims Awaiting Approval</h3>
     <p class="small mb-4" style="color:white">
@@ -26,21 +22,19 @@
                             <p class="mb-1"><strong>Email:</strong> @claim.Email</p>
                             <p class="mb-1"><strong>Subject:</strong> @claim.Subject</p>
                             <p class="mb-1"><strong>Total Amount:</strong> R @claim.TotalAmount.ToString("N2")</p>
-                       
 
-                           @*  <p class="mb-1"><strong>Documents:</strong></p>
-                            @if (claim.SavedFiles != null && claim.SavedFiles.Any())
+                            @if (claim.Documents != null && claim.Documents.Any())
                             {
+                                <p class="mb-1"><strong>Documents:</strong></p>
                                 <ul class="list-unstyled mb-2 small">
-                                    @foreach (var file in claim.SavedFiles)
+                                    @foreach (var doc in claim.Documents)
                                     {
                                         <li>
                                             <a asp-controller="AM"
                                                asp-action="DownloadDocument"
-                                               asp-route-fileName="@file"
-                                               class="text-decoration-none"
-                                               download>
-                                                @file
+                                               asp-route-documentId="@doc.DocumentId"
+                                               class="text-decoration-none">
+                                                @doc.FileName
                                             </a>
                                         </li>
                                     }
@@ -50,22 +44,6 @@
                             {
                                 <p class="small text-muted">No documents uploaded</p>
                             }
-
-                            @{
-                                string statusClass = claim.Status switch
-                                {
-                                    "Approved" => "badge bg-success",
-                                    "Verified" => "badge bg-success",
-                                    "Rejected" => "badge bg-danger",
-                                    "Pending" or _ => "badge bg-warning text-dark"
-                                };
-                            }
- *@
-                           @*  <p>
-                                <strong>Status:</strong>
-                                <span class="@statusClass">@claim.Status</span>
-                            </p>
- *@
 
                             @if (claim.Status == "Verified")
                             {
